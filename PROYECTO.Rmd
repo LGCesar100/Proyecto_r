@@ -1,0 +1,98 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+1. Conociendo los datos
+
+```{r}
+#1.1
+library(tidyverse)
+#1.2
+yearly = read.csv("../PROYECTO/deaths_handwashing.csv", header = TRUE, sep = ",", dec = ".") 
+#1.3
+yearly
+```
+
+2. El alarmante número de muertes
+
+```{r}
+#2.1
+yearly = yearly %>%
+  mutate(proportion_deaths = round(deaths / births,4))
+#2.2
+yearly
+```
+3. Muertes en las clínicas
+
+```{r}
+#3.1 y 3.2
+yearly %>%
+  ggplot(aes(x= year, y=proportion_deaths, color=clinic)) +
+  geom_line()
+```
+
+4. Comienza el lavado de manos
+
+```{r}
+#4.1
+monthly = read.csv("../PROYECTO/deaths_clinic_1.csv")
+#4.2
+monthly <- monthly %>%
+  mutate( proportion_deaths = round(deaths/births,4) )
+#4.3
+head(monthly)
+```
+
+5. El efecto del lavado de manos
+
+```{r}
+#5.1 y 5.2
+ggplot(monthly, aes(x=date, y=proportion_deaths, group = 1)) + geom_line() + 
+  labs( title="Proportion of deaths vs. Dates",  x = "Date", y = "Proportion of deaths")
+```
+
+6. Los resultados del lavado de manos
+
+```{r}
+#6.1
+monthly = monthly %>%
+  mutate(handwashing_started = if_else(as.Date("1846-12-31") < date, TRUE, FALSE ))
+#6.2 y 6.3
+ggplot(monthly, aes(x=date, y=proportion_deaths, color=handwashing_started, group =1)) +
+  geom_line() +
+  labs( x = "Date", y = "Proportion of deaths", title="Proportion of deaths vs. Dates")
+```
+
+
+7. ¿Más lavado de manos, menos muertes?
+
+```{r}
+#7.1 y 7.2
+month_summary = monthly %>%
+  group_by(handwashing_started) %>%
+  summarize(mean_proportion_deaths = round(mean(proportion_deaths),4))
+#7.3
+month_summary
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
